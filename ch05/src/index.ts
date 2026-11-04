@@ -137,7 +137,7 @@ app.get("/auth/callback", async (c) => {
 
   const tokenData = (await tokenRes.json()) as { id_token: string };
   const payloadBase64 = tokenData.id_token.split(".")[1];
-  // 実務では JWKS 公開鍵による署名検証と iss / aud / exp / nonce の検証を行う
+  // 実務では JWKS 公開鍵による署名検証と iss / aud / exp などのクレーム検証を行う
   const claims = JSON.parse(
     Buffer.from(payloadBase64, "base64url").toString("utf8"),
   ) as IdTokenClaims;
