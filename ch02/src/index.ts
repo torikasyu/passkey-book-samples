@@ -158,13 +158,13 @@ app.post("/register/options", async (c) => {
     return c.text("username is required", 400);
   }
 
-  const userIDBytes = randomBytes(32);
+  const userId = `user-${username}`;
 
   const options = await generateRegistrationOptions({
     rpName,
     rpID,
     userName: username,
-    userID: new Uint8Array(userIDBytes),
+    userID: new TextEncoder().encode(userId),
     authenticatorSelection: {
       residentKey: "required",
       userVerification: "preferred",
@@ -206,7 +206,7 @@ app.post("/register/verify", async (c) => {
   const { credential, credentialDeviceType, credentialBackedUp } =
     verification.registrationInfo;
 
-  const userId = randomBytes(16).toString("hex");
+  const userId = `user-${username}`;
   const user: User = { id: userId, username };
   users.set(userId, user);
 

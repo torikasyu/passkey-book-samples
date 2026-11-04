@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
+import { randomBytes } from "node:crypto";
 import { serve } from "@hono/node-server";
 import {
   generateAuthenticationOptions,
@@ -31,8 +31,7 @@ const rpOrigin = requiredEnv("RP_ORIGIN");
 type User = {
   id: string;
   username: string;
-  userHandle: Uint8Array;
-  passwordHash: string;
+  password: string;
 };
 
 type StoredCredential = {
@@ -44,22 +43,6 @@ type StoredCredential = {
   credentialBackedUp: boolean;
 };
 
-const hashPassword = (password: string): string => {
-  const salt = randomBytes(16).toString("hex");
-  const hash = scryptSync(password, salt, 64).toString("hex");
-  return `${salt}:${hash}`;
-};
-
-const verifyPassword = (password: string, stored: string): boolean => {
-  const [salt, key] = stored.split(":");
-  if (!salt || !key) {
-    return false;
-  }
-  const hashBuffer = scryptSync(password, salt, 64);
-  const keyBuffer = Buffer.from(key, "hex");
-  return timingSafeEqual(hashBuffer, keyBuffer);
-};
-
 const users = new Map<string, User>();
 const credentials = new Map<string, StoredCredential>();
 const challenges = new Set<string>();
@@ -68,8 +51,7 @@ const sessions = new Map<string, string>();
 const seedUser: User = {
   id: "user-alice",
   username: "alice",
-  userHandle: new TextEncoder().encode("user-alice"),
-  passwordHash: hashPassword("password123"),
+  password: "password123", // 実務ではハッシュ化して保存する
 };
 users.set(seedUser.id, seedUser);
 
@@ -141,7 +123,6 @@ app.get("/", (c) => {
           placeholder="パスキーの名前 (例: MacBook Touch ID)"
         />
         <button id="register-btn" type="button">Add Passkey</button>
-        <button id="list-btn" type="button">List Passkeys (/credentials)</button>
       </div>
       <ul id="credential-list"></ul>
     </section>
@@ -296,12 +277,6 @@ app.get("/", (c) => {
         }
       });
 
-      document.getElementById("list-btn").addEventListener("click", async () => {
-        const res = await fetch("/credentials");
-        show(await res.json());
-        await refreshCredentials();
-      });
-
       document.getElementById("me-btn").addEventListener("click", async () => {
         const res = await fetch("/me");
         show(await res.json());
@@ -331,7 +306,7 @@ app.post("/login/password", async (c) => {
   }
 
   const user = Array.from(users.values()).find((u) => u.username === username);
-  if (!user || !verifyPassword(password, user.passwordHash)) {
+  if (!user || user.password !== password) {
     return c.json({ error: "invalid username or password" }, 401);
   }
 
@@ -358,7 +333,7 @@ app.post("/register/options", async (c) => {
     rpName,
     rpID,
     userName: user.username,
-    userID: new Uint8Array(user.userHandle),
+    userID: new TextEncoder().encode(user.id),
     excludeCredentials: userCredentials.map((item) => ({
       id: item.credential.id,
       transports: item.credential.transports,
