@@ -1,6 +1,6 @@
 # 実装して理解するパスキー／WebAuthn ── サンプルコード
 
-書籍『**実装して理解するパスキー／WebAuthn ── TypeScriptで作り、Keycloakで運用する**』の公式サンプルコードリポジトリです。
+書籍『**[実装して理解するパスキー／WebAuthn ── TypeScriptで作り、Keycloakで運用する](https://www.amazon.co.jp/dp/B0HQN3FDBC)**』の公式サンプルコードリポジトリです。
 
 ---
 
