@@ -1,97 +1,97 @@
-# 実装して理解するパスキー / WebAuthn / FIDO2 ── サンプルコード
+# Understanding Passkeys / WebAuthn / FIDO2 through Implementation ── Sample Code
 
-書籍『**[実装して理解するパスキー / WebAuthn / FIDO2 ── TypeScriptで作り、Keycloakで運用する](https://www.amazon.co.jp/dp/B0HQN3FDBC)**』の公式サンプルコードリポジトリです。
+This is the official sample code repository for the book *Understanding Passkeys, WebAuthn, and FIDO2 through Implementation: Building with TypeScript and Operating with Keycloak* ([Japanese edition on Amazon.co.jp](https://www.amazon.co.jp/dp/B0HQN3FDBC)).
 
 ---
 
-## 📁 ディレクトリ構成
+## 📁 Directory Structure
 
 ```text
 .
-├── ch02/                # 第2章：パスキーを自前で実装する（最小構成の登録・認証セレモニー）
-├── ch04/                # 第4章：実務レベルへ引き上げる（パスワード併用・複数鍵管理・Conditional UI）
-└── ch05/                # 第5章：Keycloak でパスキーを運用する（IdP による認証統合・OIDC 連携）
+├── ch02/                # Chapter 2: Implementing passkeys yourself (minimal registration/authentication ceremonies)
+├── ch04/                # Chapter 4: Raising it to production level (password coexistence, multiple key management, Conditional UI)
+└── ch05/                # Chapter 5: Operating passkeys with Keycloak (authentication integration via an IdP, OIDC)
 ```
 
-- **`ch02/`**: Hono + `@simplewebauthn/server` による最小構成のパスキー登録・認証セレモニーです。discoverable credentials（resident key）によるユーザー名なしログインとセッション管理を体験します。
-- **`ch04/`**: 既存のパスワード認証との併用、同一認証器の二重登録防止（`excludeCredentials`）、複数パスキーの名前付け・一覧・削除、およびオートフィルでパスキーを提示する Conditional UI（`mediation: "conditional"`）を組み込んだ実践版です。
-- **`ch05/`**: パスキーの管理を Keycloak 26.1 に任せ、Hono アプリ側は OpenID Connect（OIDC）で認証結果（ID トークン）を受け取る本番運用構成です。ローカル Keycloak 起動用の `compose.yml` も含みます。
+- **`ch02/`**: A minimal passkey registration/authentication ceremony built with Hono + `@simplewebauthn/server`. Experience usernameless login with discoverable credentials (resident keys) and session management.
+- **`ch04/`**: A practical version that combines coexistence with existing password authentication, prevention of duplicate registration of the same authenticator (`excludeCredentials`), naming/listing/deleting multiple passkeys, and Conditional UI (`mediation: "conditional"`) that offers passkeys through autofill.
+- **`ch05/`**: A production-style setup where passkey management is delegated to Keycloak 26.1 and the Hono app receives the authentication result (ID token) via OpenID Connect (OIDC). Includes a `compose.yml` for running Keycloak locally.
 
 ---
 
-## 🚀 クイックスタート
+## 🚀 Quick Start
 
-動かしたい章のディレクトリに移動し、依存パッケージのインストールと起動を行います。  
-動作確認には **Google Chrome** の使用を推奨します（※macOS 上の Safari では `http://localhost` 環境における OS 自動入力メニューの仕様上、Conditional UI が発火しない場合があります）。
+Move into the directory of the chapter you want to run, then install dependencies and start the server.  
+**Google Chrome** is recommended for trying the samples (on macOS Safari, Conditional UI may not trigger on `http://localhost` due to how the OS autofill menu behaves in that environment).
 
-### 第2章を実行する場合（最小実装）:
+### Running Chapter 2 (minimal implementation):
 
 ```bash
 cd ch02
 npm install
 
-# .env を作成
+# Create .env
 cp .env.example .env
 
 npm run dev
 ```
 
-起動後、Google Chrome で `http://localhost:3000` にアクセスし、「Register Passkey」→「Login with Passkey」の順に動作を確認してください。
+After startup, open `http://localhost:3000` in Google Chrome and try "Register Passkey" followed by "Login with Passkey".
 
 ---
 
-### 第4章を実行する場合（実務レベル実装）:
+### Running Chapter 4 (production-level implementation):
 
 ```bash
 cd ch04
 npm install
 
-# .env を作成
+# Create .env
 cp .env.example .env
 
 npm run dev
 ```
 
-起動後、Google Chrome で `http://localhost:3000` にアクセスします。
-1. `alice` / `password123` で「Login with Password」をクリックしてログイン
-2. 「Add Passkey」でパスキーを追加登録（二重登録ブロックも確認可能）
-3. 「Logout」後、ユーザー名入力欄をクリックして Conditional UI（オートフィル）からパスキーを選択してログイン
+After startup, open `http://localhost:3000` in Google Chrome.
+1. Log in with `alice` / `password123` by clicking "Login with Password"
+2. Register an additional passkey with "Add Passkey" (you can also see duplicate registration being blocked)
+3. After "Logout", click the username field and log in by selecting a passkey from Conditional UI (autofill)
 
-> 💡 **注意**: 第2章で作成した `localhost` 用のパスキーが OS のパスワードマネージャーに残っていると候補が重複するため、事前に OS の「パスワード」アプリ等から既存の `localhost` パスキーを削除しておくとスムーズです。
+> 💡 **Note**: If a `localhost` passkey created in Chapter 2 remains in your OS password manager, candidates may overlap. Deleting the existing `localhost` passkey from your OS Passwords app beforehand makes this smoother.
 
 ---
 
-### 第5章を実行する場合（Keycloak 運用）:
+### Running Chapter 5 (Keycloak operation):
 
-#### 1. Keycloak を起動する
+#### 1. Start Keycloak
 
 ```bash
 cd ch05
 docker compose up -d
 ```
 
-起動後、ブラウザで `http://localhost:8080` を開き、管理コンソールにログインします。
-- **ユーザー名**: `admin`
-- **パスワード**: `admin`
+After startup, open `http://localhost:8080` in your browser and log in to the admin console.
+- **Username**: `admin`
+- **Password**: `admin`
 
-書籍の手順に従い、Realm（`passkey-book`）、Client（`passkey-book-app`）、User（`alice`）、WebAuthn Passwordless ポリシーおよび認証フロー（`browser-passkey`）を設定してください。
+Following the book's steps, configure the realm (`passkey-book`), client (`passkey-book-app`), user (`alice`), the WebAuthn Passwordless policy, and the authentication flow (`browser-passkey`).
 
-#### 2. アプリケーションを起動する
+#### 2. Start the application
 
 ```bash
-# .env を作成
+# Create .env
 cp .env.example .env
-# .env の OIDC_CLIENT_SECRET を Keycloak の管理画面で取得した値に編集
+# Edit OIDC_CLIENT_SECRET in .env with the value from the Keycloak admin console
 
 npm install
 npm run dev
 ```
 
-起動後、ブラウザで `http://localhost:3000` にアクセスし、「Login with Keycloak (OIDC)」をクリックしてください。初回は Required Action でパスキーを登録し、次回以降はパスキーによるパスワードレスログインが行えます。
+After startup, open `http://localhost:3000` in your browser and click "Login with Keycloak (OIDC)". On first login you will register a passkey through a Required Action; from then on you can log in passwordlessly with your passkey.
 
 ---
 
-## 🛠 技術スタック
+## 🛠 Tech Stack
 
 - **Runtime**: Node.js (v20+)
 - **Language**: TypeScript
@@ -102,6 +102,6 @@ npm run dev
 
 ---
 
-## 📄 ライセンス
+## 📄 License
 
 MIT License
