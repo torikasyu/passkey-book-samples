@@ -56,7 +56,7 @@ const fetchDiscovery = async (): Promise<OpenIdConfiguration> => {
 
 app.get("/", (c) => {
   return c.html(`<!doctype html>
-<html lang="ja">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <title>Keycloak Passkey OIDC Hands-on</title>
@@ -68,8 +68,8 @@ app.get("/", (c) => {
       <button id="me-btn" type="button">Check Session (/me)</button>
       <a href="/auth/logout"><button type="button">Logout</button></a>
     </div>
-    <h2>実行結果</h2>
-    <pre id="output">読み込み中...</pre>
+    <h2>Execution Result</h2>
+    <pre id="output">Loading...</pre>
     <script>
       const output = document.getElementById("output");
       const checkSession = async () => {
@@ -137,7 +137,7 @@ app.get("/auth/callback", async (c) => {
 
   const tokenData = (await tokenRes.json()) as { id_token: string };
   const payloadBase64 = tokenData.id_token.split(".")[1];
-  // 実務では JWKS 公開鍵による署名検証と iss / aud / exp などのクレーム検証を行う
+  // In production, verify signature with JWKS and validate claims (iss, aud, exp)
   const claims = JSON.parse(
     Buffer.from(payloadBase64, "base64url").toString("utf8"),
   ) as IdTokenClaims;

@@ -51,7 +51,7 @@ const sessions = new Map<string, string>();
 const seedUser: User = {
   id: "user-alice",
   username: "alice",
-  password: "password123", // 実務ではハッシュ化して保存する
+  password: "password123", // In production, store salted/hashed passwords
 };
 users.set(seedUser.id, seedUser);
 
@@ -79,7 +79,7 @@ const getCurrentUser = (c: Context): User | undefined => {
 
 app.get("/", (c) => {
   return c.html(`<!doctype html>
-<html lang="ja">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <title>Passkey Practical Hands-on</title>
@@ -88,21 +88,21 @@ app.get("/", (c) => {
     <h1>Passkey Practical Hands-on (ch04)</h1>
 
     <section>
-      <h2>1. ログイン（パスワード併用 + Conditional UI）</h2>
+      <h2>1. Login (Passwords + Conditional UI)</h2>
       <div>
         <input
           id="username"
           name="username"
           type="text"
           autocomplete="username webauthn"
-          placeholder="username (空欄時は alice)"
+          placeholder="username (leave blank for alice)"
         />
         <input
           id="password"
           name="password"
           type="password"
           autocomplete="current-password"
-          placeholder="password (初期値: password123)"
+          placeholder="password (default: password123)"
           value="password123"
         />
       </div>
@@ -115,20 +115,20 @@ app.get("/", (c) => {
     </section>
 
     <section>
-      <h2>2. パスキーの管理（要ログイン）</h2>
+      <h2>2. Passkey Management (Requires Login)</h2>
       <div>
         <input
           id="passkey-name"
           type="text"
-          placeholder="パスキーの名前 (例: MacBook Touch ID)"
+          placeholder="Passkey label (e.g. MacBook Touch ID)"
         />
         <button id="register-btn" type="button">Add Passkey</button>
       </div>
       <ul id="credential-list"></ul>
     </section>
 
-    <h2>実行結果</h2>
-    <pre id="output">操作してください</pre>
+    <h2>Execution Result</h2>
+    <pre id="output">Click an action to start</pre>
 
     <script>
       const output = document.getElementById("output");

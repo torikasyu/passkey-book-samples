@@ -47,7 +47,7 @@ const sessions = new Map<string, string>();
 
 app.get("/", (c) => {
   return c.html(`<!doctype html>
-<html lang="ja">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <title>Passkey Hands-on</title>
@@ -56,20 +56,20 @@ app.get("/", (c) => {
     <h1>Passkey Hands-on</h1>
 
     <section>
-      <h2>1. パスキー登録</h2>
-      <input id="username" type="text" placeholder="username (例: alice)" />
+      <h2>1. Register Passkey</h2>
+      <input id="username" type="text" placeholder="username (e.g. alice)" />
       <button id="register-btn" type="button">Register Passkey</button>
     </section>
 
     <section>
-      <h2>2. パスキー認証（ユーザー名入力なし）</h2>
+      <h2>2. Passkey Authentication (Usernameless)</h2>
       <button id="login-btn" type="button">Login with Passkey</button>
       <button id="me-btn" type="button">Check Session (/me)</button>
       <button id="logout-btn" type="button">Logout</button>
     </section>
 
-    <h2>実行結果</h2>
-    <pre id="output">ボタンを押して操作してください</pre>
+    <h2>Execution Result</h2>
+    <pre id="output">Click a button to start</pre>
 
     <script>
       const output = document.getElementById("output");
