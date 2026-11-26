@@ -1,6 +1,6 @@
 # Understanding Passkeys / WebAuthn / FIDO2 through Implementation ── Sample Code
 
-This is the official sample code repository for the book *Understanding Passkeys, WebAuthn, and FIDO2 through Implementation: Building with TypeScript and Operating with Keycloak* ([Japanese edition on Amazon.co.jp](https://www.amazon.co.jp/dp/B0HQN3FDBC)).
+This is the official sample code repository for the book *Understanding Passkeys, WebAuthn, and FIDO2 through Implementation: Building with TypeScript and Operating with Keycloak* ([English edition on Amazon.com](https://www.amazon.com/dp/B0HRB3Z19G); [Japanese edition on Amazon.co.jp](https://www.amazon.co.jp/dp/B0HQN3FDBC)).
 
 ---
 
